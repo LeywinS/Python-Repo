@@ -367,3 +367,178 @@ my_queue.append(10)
 print(my_queue)
 my_queue.popleft()
 print(my_queue)
+
+
+class Bestdeque():
+    def __init__(self):
+        self.bestdeque=deque()
+    def push (self,item):
+        self.bestdeque.append(item)
+    def pop(self):
+        if len(self.bestdeque)>0:
+            self.bestdeque.popleft()
+        else:
+            return None
+    def peek(self):
+        if len(self.bestdeque) > 0:
+            return self.bestdeque[len(self.bestdeque)-1]
+        else: 
+            return None
+    def __str__(self):
+        return str(self.bestdeque)
+        
+myqueue2=Bestdeque()
+myqueue2.push(5)
+myqueue2.push(6)
+myqueue2.push(7)
+print(myqueue2)
+myqueue2.pop()
+print(myqueue2)
+
+# MaxHeap complete binary tree every node <= Parent Complexity Insert in O(log n) Get Max in O(1) and remove max (log n) so pretty fast 
+# it's implement using a list and the top with index 1 then left 2 right 3 child or left 4 ,5 and so on
+# if for ex we want to access the numner 5 which is the index 4 we know the parent is i/2 so 4/2 so 2 and number 5 left child is i*2 so 4*2 so 8 
+# and right one so i*2+1 = 9
+#Operation Push (insert) Peek (get max) Pop (Remove max)
+#[Push] Add value to end of array float it up to it's proper position to do that we ask if he is greater than his parent if it's the case we swap them
+#Otherwise he stay there
+#[Peek] return the value at heap[0] so the max
+#[Pop] move max to end of array , delete it , Buddle Down the item at index 1 to it's proper position & return max
+#So we swap position between our max and the last element , delete it and then bubble down to get this to his correct position 
+#so in case we have 11 with left 16 and right 24 we promote 24 and then 11 is the parent we see if his children are greater or not
+#So we have public and private function so the user can't see them public (push,peek,pop) and private (swap,__floatUp__,__bubbleDown____str)
+
+class MaxHeap:
+    def __init__(self,items=[]):
+        super().__init__()
+        self.heap=[0] # we start at index n1
+        for item in items:
+            self.heap.append(item)
+            self.__floatUp(len(self.heap)-1) #len(self.heap)-1 renvoie bien le premier element puis le deuxieme puis le 3e ect
+    
+    def push(self,data):
+        self.heap.append(data)
+        self.__floatUp(len(self.heap)-1)
+    
+    def peek(self):
+        if self.heap[1]:
+            return self.heap[1]
+        else:
+            return False
+        
+    def pop(self):
+        if len(self.heap) > 2:
+            self.__swap(1,len(self.heap)-1)
+            print(self.heap)
+            max=self.heap.pop()
+            print(self.heap)
+            self.__bubbleDown(1)
+            print(self.heap)
+        elif len(self.heap)==2:
+            max=self.heap.pop()
+            print(self.heap)
+        else:
+            max= False
+        return max
+    
+    def __swap(self,i,j):
+        self.heap[i],self.heap[j] = self.heap[j],self.heap[i]
+    
+
+    def __floatUp(self,index):
+        parent = index//2
+        if index <=1:
+            return
+        elif self.heap[index] > self.heap[parent]:
+            self.__swap(index,parent)
+            self.__floatUp(parent)
+
+    def __bubbleDown(self,index):
+        left = index * 2
+        right = index*2+1
+        largest = index
+        if len(self.heap) > left and self.heap[largest] < self.heap[left]:
+            largest=left
+        if largest != index:
+            self.__swap(index,largest)
+            self.__bubbleDown(largest)
+    
+    def __str__(self):
+        return str(self.heap)
+    
+
+
+m = MaxHeap([1,2,3,4])
+m.push(10)
+print(m)
+print(m.pop())
+print(m.peek())
+
+#_____________________________________________________________
+#Linked List
+#Attributes Root pointer to the beggining of the list , Size number of nodes in List
+#Operations find(data) add(data) remove(data) print_list()
+#[Add]We start by creating the data then our node.next is going to point to the current root data and then we attribute the root to our data
+#[Remove] we start a the root we see if the data is our data to remove if not we continue our walk when we find it to delete it 
+#We take the previous node and made it point the next node
+
+
+#Node Class
+
+class Node:
+    def __init__(self,d,n=None,p=None):
+        self.data=d
+        self.next_node=n
+        self.prev_node=p
+    
+    def __str__(self):
+        return ('('+ str(self.data)+')')
+    
+
+#LinkedList Class
+
+class LinkedList:
+    
+    def __init__(self,r=None):
+        self.root =r 
+        self.size = 0
+
+    def add(self,d):
+        new_node=Node(d,n=self.root)
+        self.root = new_node
+        self.size +=1
+    
+    def find(self,d):
+        this_node = self.root
+        while this_node is not None:
+            if this_node.data==d:
+                return d
+            else:
+                this_node=this_node.next_node
+        return None
+
+    def remove(self,d):
+        this_node =self.root
+        prev_node = None
+        while this_node is not None:
+            if this_node.data == d: 
+                if prev_node is not None: #data is in non-root
+                    prev_node.next_node = this_node.next_node    
+                else: # data is in root node 
+                    self.root=this_node.next_node
+                self.size -=1
+                return True #data removed
+            else:
+                prev_node=this_node
+                this_node=this_node.next_node
+        return False #data not found
+    
+    def print_list(self):
+        this_node = self.root
+        while this_node is not None:
+            print(this_node,end='->')
+            this_node = this_node.next_node
+
+        print('None')
+
+#1:17:18
