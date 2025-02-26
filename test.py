@@ -541,4 +541,340 @@ class LinkedList:
 
         print('None')
 
-#1:17:18
+#Test Code 
+
+
+myList=LinkedList()
+myList.add(5)
+myList.add(8)
+myList.add(12)
+myList.print_list()
+print("size= "+str(myList.size))
+myList.remove(8)
+print("size = "+str(myList.size))
+print(myList.find(5))
+print(myList.root)
+
+
+#Circular Linked List
+#Advantage is for modeling continuous looping objects like a monopoly board or race tracking.
+#Same as regular linkedList but to add an object we insert it a  the second node bcs our last node point back to the first node
+
+class CircularLinkedList:
+    def __init__(self, r=None):
+        self.root=r
+        self.size=0
+    
+    def add(self,d):
+        if self.size == 0:
+            self.root= Node(d)
+            self.root.next_node=self.root
+        else:
+            new_node = Node(d,self.root.next_node)
+            self.root.next_node=new_node
+        self.size +=1
+
+    def find(self,d):
+        this_node = self.root
+        while True:
+            if this_node.data ==d:
+                return d
+            elif this_node.next_node == self.root:
+                return False
+            this_node= this_node.next_node
+    
+    def remove(self,d): #We track the 2 nodes
+        this_node = self.root
+        prev_node = None
+
+        while True:
+            if this_node.data==d: #found
+                if prev_node is not None:
+                    prev_node.next_node=this_node.next_node
+                else:
+                    while this_node.next_node !=self.root:
+                        this_node = this_node.next_node
+                    this_node.next_node = self.root.next_node
+                    self.root = self.root.next_node
+                self.size -=1
+                return True
+            elif this_node.next_node == self.root:
+                return False
+            prev_node= this_node
+            this_node = this_node.next_node
+
+    def print_list(self):
+        if self.root is None:
+            return
+        this_node = self.root
+        print(this_node, end="->")
+        while this_node.next_node != self.root:
+            this_node=this_node.next_node
+            print(this_node, end="->")
+        print() 
+
+cll = CircularLinkedList()
+for i in [8,7,3,8,9]:
+    cll.add(i)
+
+print("size="+str(cll.size))
+print(cll.find(8))
+print(cll.find(12))
+
+my_node = cll.root
+cll.print_list()
+
+#Doubly Linked List point to the precedent and next Item
+
+class DoublyLinkedList:
+    def __init__(self,r= None):
+        self.root =r 
+        self.last =r 
+        self.size = 0
+
+    def add (self,d):
+        if self.size == 0:
+            self.root = Node(d)
+            self.last = self.root
+        else:
+            new_node = Node(d,self.root)
+            self.root.prev_node = new_node
+            self.root = new_node
+        self.size +=1
+
+    def find (self,d):
+        this_node = self.root
+        while this_node is not None:
+            if this_node.data == d:
+                return d 
+            elif this_node.next_node == None:
+                return False
+            else:
+                this_node = this_node.next_node
+
+    def remove(self,d):
+        this_node = self.root
+        while this_node is not None:
+            if this_node.data == d:
+                if this_node.prev_node is not None:
+                    if this_node.next_node is not None:
+                        this_node.prev_node.next_node = this_node.next_node
+                        this_node.next_node.prev_node = this_node.prev_node
+                    else:
+                        this_node.prev_node.next_node=None
+                        self.last = this_node.prev_node
+                else:
+                    self.root = this_node.next_node
+                    this_node.next_node.prev_node = self.root
+                self.size -=1
+                return True
+            else:
+                this_node = this_node.next_node
+        return False
+    
+    def print_list(self):
+        if self.root is None:
+            return
+        this_node = self.root
+        print(this_node, end="->")
+        while this_node.next_node is not None:
+            this_node=this_node.next_node
+            print(this_node, end="->")
+        print() 
+
+print("#####################")
+# Test Code
+
+dll = DoublyLinkedList()
+
+for i in  [5,9,3,8,9]:
+    dll.add(i)
+
+print("size="+str(dll.size))
+dll.print_list()
+dll.remove(8)
+print("size="+str(dll.size))
+print(dll.remove(15))
+print(dll.remove(5)) # Sa execute bien la fonction meme dans un print
+dll.print_list()
+
+#Binary Tree with this data struct we can find in max 30 guess a number between 1 and 10 million
+#A tree is compose of node that are connect with a edge a the top we have a root also have (parent node and children node in a binary tree , the parent
+#can have up to 2 child , the child from the same parent are called siblings and the node at the really bottom are call leaf)
+# Ancestor are each node that are above the parent node descendant are the other way arround
+#In binary Search Tree each node is greater than every node in its let subtree (Donc tu connais a droite plus grand gauche plus petit)
+#Bst Insert we always insert as a leaf
+# we compare the root if greather -> right otherwise left ect...
+# Find we start at the root
+#Same we compare if greather or lower than the root then look up for the left or right side
+#Delete 3 different cases : leaf node , 1 child , 2 children
+#Leaf node easy we just delete them
+#1 child we promote the child node to the target node position
+#2 children find the next higher node so take the right side and go all the way to the left and swap them and we can remove the node
+#Get Size is recursive like almost all the other size =1 + size(left subtree)+size(right subtree)
+#Preorder Traversal
+#Visit root before visiting the root's subtrees 1->root 2->root of left subtree 3->left of root of left subtree ect when left side clear we go to right
+#side and do the same with the left side then right side
+#Inorder Traversal
+#Visit root between visiting the root's subtrees gives values in sorted order so 1 -> Total left 2->his parent 3->right side 4-> the ancestor ect
+#Advantages of binary search Trees?
+# Because trees use recursion for most operations they are fairly easy to implemenet but the speed us really good
+#Insert , Delete , Find in 
+#O(h) = O(log n) where h is the height of the tree 
+
+class Tree:
+    def __init__(self,data,left=None,right=None):
+        self.data = data
+        self.left = left
+        self.right = right
+    def insert(self, data):
+        if self.data == data:
+            return False  # Évite les doublons
+        elif data < self.data:
+            if self.left is not None:
+                return self.left.insert(data)
+            else:
+                self.left = Tree(data)
+                return True
+        else:
+            if self.right is not None:
+                return self.right.insert(data)
+            else:
+                self.right = Tree(data)
+                return True
+    def find (self,data):
+        if self.data == data:
+            return data 
+        elif self.data > data:
+            if self.left is None:
+                return False
+            else:
+                return self.left.find(data)
+        elif self.data < data:
+            if self.right is None:
+                return False
+            else:
+                return self.right.find(data)
+    def get_size(self):
+        if self.left is not None and self.right is not None:
+            return 1 + self.left.get_size() + self.right.get_size()
+        elif self.left:
+            return 1 + self.left.get_size()
+        elif self.right:
+            return 1 + self.right.get_size()
+        else:
+            return 1
+    
+    def preorder(self):
+        if self is not None:
+            print(self.data, end=" ")
+            if self.left is not None:
+                self.left.preorder()
+            if self.right:
+                self.right.preorder()
+    
+    def inorder(self):
+        if self.left is not None:
+            self.left.inorder()
+        print(self.data, end=" ")  # Impression de la valeur actuelle
+        if self.right is not None:
+            self.right.inorder()
+
+
+print("############################")
+tree = Tree(7)
+tree.insert(9)
+print(tree.preorder())
+for i in [15,10,2,12,3,1,13,6,11,4,14,9]:
+    tree.insert(i)
+    
+for i in range(16):
+    print(tree.find(i),end=" ")
+print ("\n", tree.get_size())
+
+print(tree.preorder())
+print(tree.inorder())
+# Vertex (sommet) A-B-C etc and (A->B) le segment est un edge
+#Undirected Graph bidirectional both way arround (Social network connection)
+#Directed Graph 1 way use for modeling flight in airplane for ex (where it's may go to one city but not the other)
+#We can represent them with Adjancency List which gives all the connection for ex : A: B,C,E -> B:A,C ect... or an Adjacency Matrix
+# Which have from and to so 
+#  A B C D
+#A 0 1 1 0
+#B 1 0 1 0
+#C 1 1 0 1
+#D 0 1 0 0
+# So if there is a 1 that means that it's connect otherwise it's not
+#If we have to implement weight it's much better to use a matrix bcs u can put directly the weight instead of 1 where in the list you have a implement
+#a tuple
+# Same with with Directed graph the only diff is that the matrix isn't symetric
+#There is 2 type of Graph (Dense Graph) -> graph where |E| = |V|² le nombre de edge = nb de vertex au carré (Un grand nombre)
+#Sparse Graph where |E| = |V| donc pas enormement de connexion
+#Which one better?
+# Adjacency List
+#Pro : Faster and uses less space for Sparse graphs
+#Con ; Slower for Dense graphs
+
+#Adjacency Matrix
+#Pro: Faster for dense graphs
+#Pro:Simpler for Weighted edges
+#Con:Uses more space
+
+#Vertex Class
+class Vertex:
+    def __init__(self,n):
+        self.name= n
+        self.neighbors=set()
+
+    def add_neighbor(self,v):
+        self.neighbors.add(v)
+
+
+class Graph:
+    vertices = {}
+
+    def add_vertex(self,vertex):
+        if isinstance(vertex,Vertex) and vertex.name not in self.vertices:
+            self.vertices[vertex.name] = vertex
+            return True
+        else:
+            return False
+        
+    def add_edge(self,u,v):
+        if u in self.vertices and v in self.vertices:
+            self.vertices[u].add_neighbor(v)
+            self.vertices[v].add_neighbor(u)
+            return True
+        else:
+            return False
+        
+    def print_graph(self):
+        for key in sorted(list(self.vertices.keys())):
+            print(key,sorted(list(self.vertices[key].neighbors)))
+
+#Test Code 3 way to add vertex to our graph (Sommet)
+g = Graph()
+a=Vertex("A")
+g.add_vertex(a)
+g.add_vertex(Vertex('B'))
+for i in range(ord("A"),ord('K')): #ord gives us the numerical equivalent to permit to loop throught
+    g.add_vertex(Vertex(chr(i)))
+g.print_graph()
+print("###############")
+edges=["AB","AE","BF","CG","DE","DH","EH","FG","FI","FJ","GJ",'IH']
+for edge in edges:
+    g.add_edge(edge[0],edge[1])
+g.print_graph()
+
+#See the course for the matrix implement one
+#
+#
+#
+##
+##
+##
+##
+##
+#
+##
+#
